@@ -21,7 +21,7 @@ def main():
 
     # Threshold for an optimal value, it may vary depending on the image.
     img[dst>0.01*dst.max()]=[0,0,255]
-    path = 'C:/Users/VIVTRIPATHI/Desktop/Projects/OpenCVLearn/output/'
+    path = os.getcwd() + '/output/'
     file_name = os.path.basename(sys.argv[0])
     cv2.imwrite(str(path)+'{0}.jpg'.format(file_name),img)
     cv2.imshow('dst',img)

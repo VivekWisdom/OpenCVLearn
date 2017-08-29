@@ -21,7 +21,7 @@ def main():
     img=cv2.drawKeypoints(gray,kp, img, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
     # Save the Annotated Image to output directory
-    path = 'C:/Users/VIVTRIPATHI/Desktop/Projects/OpenCVLearn/output/'
+    path = os.getcwd() + '/output/'
     file_name = os.path.basename(sys.argv[0])
 
     cv2.imwrite(str(path)+'{0}.jpg'.format(file_name),img)

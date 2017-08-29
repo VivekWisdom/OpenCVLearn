@@ -35,7 +35,7 @@ def main():
     img[res[:,3],res[:,2]] = [0,255,0]
 
     # Get Path and filename setup
-    path = 'C:/Users/VIVTRIPATHI/Desktop/Projects/OpenCVLearn/output/'
+    path = os.getcwd() + '/output/'
     file_name = os.path.basename(sys.argv[0])
 
     cv2.imwrite(str(path)+'{0}.jpg'.format(file_name),img)

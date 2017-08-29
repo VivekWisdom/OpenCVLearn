@@ -21,7 +21,7 @@ def main():
         x,y = i.ravel()
         cv2.circle(img,(x,y),3,255,-1)
 
-    path = 'C:/Users/VIVTRIPATHI/Desktop/Projects/OpenCVLearn/output/'
+    path = os.getcwd() + '/output/'
     file_name = os.path.basename(sys.argv[0])
     cv2.imwrite(str(path)+'{0}.jpg'.format(file_name),img)
 
