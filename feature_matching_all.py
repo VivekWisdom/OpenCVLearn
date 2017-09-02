@@ -35,7 +35,7 @@ def main():
     elif descriptor == 'FLANN':
         feature_matching_FLANN(query_image, train_image)
     else:
-        raise Exception('Entered Descriptor is not valid, please enter any of ORB, SIFT or FLANN')
+        raise Exception('Entered Descriptor is not valid, please enter any one of (ORB, SIFT or FLANN)')
 
 def feature_matching_ORB(query_image, train_image):
 
@@ -65,11 +65,75 @@ def feature_matching_ORB(query_image, train_image):
     # Display the Image
     plt.imshow(result_img),plt.show()
 
-def feature_matching_SIFT(query, train):
-    sift = cv2.SIFT_create()
+def feature_matching_SIFT(query_image, train_image):
+    #Create SIFT Object
+    sift = cv2.xfeatures2d.SIFT_create()
 
-def feature_matching_FLANN(query, train):
-    sift = cv2.SIFT_create()
+    # find the keypoints and descriptors with SIFT
+    query_kp, query_des = sift.detectAndCompute(query_image,None)
+    train_kp, train_des = sift.detectAndCompute(train_image,None)
+
+    # create BFMatcher object
+    bf = cv2.BFMatcher()
+
+    # Match descriptors
+    matches = bf.knnMatch(query_des,train_des, k = 2)
+    
+    # Apply ratio test
+    good = []
+    for m,n in matches:
+        if m.distance < 0.75*n.distance:
+            good.append([m])
+
+    # cv2.drawMatchesKnn expects list of lists as matches.
+    result_img = cv2.drawMatchesKnn(query_image,query_kp,train_image,train_kp,good,flags=2, outImg = None)
+
+    # Get Path and filename setup
+    path = os.getcwd() + '/output/'
+    file_name = os.path.basename(sys.argv[0])
+    cv2.imwrite(str(path)+'{0}sift.jpg'.format(file_name),result_img)
+
+    # Display the Image
+    plt.imshow(result_img),plt.show()
+
+def feature_matching_FLANN(query_image, train_image):
+    #Create SIFT Object
+    sift = cv2.xfeatures2d.SIFT_create()
+
+    # find the keypoints and descriptors with SIFT
+    query_kp, query_des = sift.detectAndCompute(query_image,None)
+    train_kp, train_des = sift.detectAndCompute(train_image,None)
+
+    # FLANN parameters
+    FLANN_INDEX_KDTREE = 0
+    index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
+    search_params = dict(checks=50)   # or pass empty dictionary
+
+    flann = cv2.FlannBasedMatcher(index_params,search_params)
+
+    matches = flann.knnMatch(query_des,train_des,k=2)
+
+    # Need to draw only good matches, so create a mask
+    matchesMask = [[0,0] for i in range(len(matches))]
+
+    # ratio test as per Lowe's paper
+    for i,(m,n) in enumerate(matches):
+        if m.distance < 0.7*n.distance:
+            matchesMask[i]=[1,0]
+
+    draw_params = dict(matchColor = (0,255,0),
+                    singlePointColor = (255,0,0),
+                    matchesMask = matchesMask,
+                    flags = 0)
+    result_img = cv2.drawMatchesKnn(query_image,query_kp,train_image,train_kp,matches,None,**draw_params)
+
+    # Get Path and filename setup
+    path = os.getcwd() + '/output/'
+    file_name = os.path.basename(sys.argv[0])
+    cv2.imwrite(str(path)+'{0}flann.jpg'.format(file_name),result_img)
+
+    plt.imshow(result_img)
+    plt.show()
 
 if __name__ == '__main__':
     main()
