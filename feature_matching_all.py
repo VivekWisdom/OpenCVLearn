@@ -112,15 +112,22 @@ def feature_matching_FLANN(query_image, train_image):
     flann = cv2.FlannBasedMatcher(index_params,search_params)
 
     matches = flann.knnMatch(query_des,train_des,k=2)
-
+ 
     # Need to draw only good matches, so create a mask
     matchesMask = [[0,0] for i in range(len(matches))]
 
+    good_matches_count = 0
     # ratio test as per Lowe's paper
     for i,(m,n) in enumerate(matches):
-        if m.distance < 0.7*n.distance:
+        if m.distance < 0.8 * n.distance:
             matchesMask[i]=[1,0]
+            good_matches_count += 1
+    mlen = len(matches)
 
+    accuracy = good_matches_count/len(train_des) * 100
+
+    print('Matches length {}, Good Matches Count {}, and accuracy is {}'.format(mlen, mmlen_count, accuracy))
+    
     draw_params = dict(matchColor = (0,255,0),
                     singlePointColor = (255,0,0),
                     matchesMask = matchesMask,
@@ -130,7 +137,7 @@ def feature_matching_FLANN(query_image, train_image):
     # Get Path and filename setup
     path = os.getcwd() + '/output/'
     file_name = os.path.basename(sys.argv[0])
-    cv2.imwrite(str(path)+'{0}flann.jpg'.format(file_name),result_img)
+    cv2.imwrite(str(path)+'{0}flannaccuracy.jpg'.format(file_name),result_img)
 
     plt.imshow(result_img)
     plt.show()
