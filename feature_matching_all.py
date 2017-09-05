@@ -126,7 +126,7 @@ def feature_matching_FLANN(query_image, train_image):
 
     accuracy = good_matches_count/len(train_des) * 100
 
-    print('Matches length {}, Good Matches Count {}, and accuracy is {}'.format(mlen, mmlen_count, accuracy))
+    print('Matches length {}, Good Matches Count {}, and accuracy is {}'.format(mlen, good_matches_count, accuracy))
     
     draw_params = dict(matchColor = (0,255,0),
                     singlePointColor = (255,0,0),
